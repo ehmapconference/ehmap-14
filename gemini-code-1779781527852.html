@@ -43,6 +43,78 @@
             min-width: 65px;
             color: white;
         }
+        @media (min-width: 768px) {
+            .countdown-card { padding: 1.25rem; min-width: 90px; }
+        }
+
+        .spin-slow {
+            animation: spin 8s linear infinite;
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .view-section {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
+        }
+        .view-section.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .btn-gradient {
+            background: linear-gradient(135deg, #1e3a8a 0%, #0d9488 100%) !important;
+            color: white !important;
+            border: none !important;
+            box-shadow: 0 10px 25px rgba(30, 58, 138, 0.3);
+            transform: scale(1.02);
+        }
+        .btn-gradient-amber {
+            background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%) !important;
+            color: white !important;
+            border: none !important;
+            box-shadow: 0 10px 25px rgba(245, 158, 11, 0.35);
+            transform: scale(1.03);
+        }
+
+        .fee-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+            transition: transform 0.3s, border-color 0.3s;
+        }
+        .fee-card:hover { 
+            transform: translateY(-4px); 
+            border-color: #f59e0b; 
+        }
+
+        .shimmer-wrapper {
+            position: relative;
+            overflow: hidden;
+            border-radius: 9999px;
+        }
+        .shimmer-text {
+            position: relative;
+            overflow: hidden;
+        }
+        .shimmer-text::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 50%; height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.35), transparent);
+            transform: skewX(-25deg);
+            animation: shimmer 3s infinite;
+        }
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 150%; }
+        }
     </style>
 </head>
 <body class="bg-white text-slate-900 font-['Montserrat']">
@@ -68,7 +140,9 @@
                 </div>
                 
                 <div class="lg:hidden">
-                    <button onclick="toggleMobileMenu()" class="text-blue-900 text-2xl focus:outline-none"><i class="fas fa-bars" id="hamburgerIcon"></i></button>
+                    <button onclick="toggleMobileMenu()" class="text-blue-900 text-2xl focus:outline-none">
+                        <i class="fas fa-bars" id="hamburgerIcon"></i>
+                    </button>
                 </div>
 
                 <div class="hidden lg:flex items-center gap-8">
@@ -117,6 +191,9 @@
                     <h1 class="text-3xl md:text-5xl font-extrabold text-white mb-3 leading-[1.15] font-['Playfair_Display']">
                         Ecology, Human Habitat and <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-green-400">Environmental Change</span> in Malay World
                     </h1>
+                    <p class="text-sm md:text-base text-slate-300 max-w-2xl mb-8 leading-relaxed">
+                        Join the 14th International Conference on Ecology, Human Habitat and Environmental Change in Malay World (EHMAP-14). Bring together researchers, scientists, and stakeholders.
+                    </p>
                 </div>
             </section>
         </div>
@@ -166,20 +243,36 @@
                 document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
             }
         }
-        
+
+        // --- Kontrol Background Music ---
+        const audio = document.getElementById("bgMusic");
+        const musicIcon = document.getElementById("musicIcon");
+        const soundWaves = document.querySelector(".sound-waves");
+        let isPlaying = false;
+        audio.volume = 0.15;
+
         function toggleMusic() {
-            const audio = document.getElementById("bgMusic");
-            const musicIcon = document.getElementById("musicIcon");
-            const soundWaves = document.querySelector(".sound-waves");
-            if (audio.paused) {
-                audio.play();
-                musicIcon.classList.add("fa-spin");
-                soundWaves.classList.remove("hidden");
-            } else {
+            if (isPlaying) {
                 audio.pause();
-                musicIcon.classList.remove("fa-spin");
+                musicIcon.classList.remove("spin-slow");
                 soundWaves.classList.add("hidden");
+            } else {
+                audio.play().catch(e => console.log("Interaksi awal diblokir browser:", e));
+                musicIcon.classList.add("spin-slow");
+                soundWaves.classList.remove("hidden");
             }
+            isPlaying = !isPlaying;
+        }
+
+        document.body.addEventListener('click', function initAudio() {
+            if (!isPlaying) {
+                toggleMusic();
+            }
+            document.body.removeEventListener('click', initAudio);
+        }, { once: true });
+
+        function triggerRegister() {
+            Swal.fire('Informasi Pendaftaran', 'Formulir pendaftaran sedang diintegrasikan.', 'info');
         }
     </script>
 </body>
